@@ -8,9 +8,10 @@ public class DesktopDialog : Dialog {
 
     private MenuCategoryPanel _category;
 
-    public override void Init() {
-        Logger.Instance.Log("Начало метода [DesktopDialog : Init]");
-        base.Init();
+    public override void Init(Logger logger) {
+        base.Init(logger);
+
+        logger.Log("Начало метода [DesktopDialog : Init]");
     }
 
     public override void InitializationPanels() {
@@ -21,7 +22,7 @@ public class DesktopDialog : Dialog {
     public override void AddListeners() {
         base.AddListeners();
 
-        _category.EcosystemDialogSelected += OnPolyhedrasDialogSelected;
+        _category.EcosystemDialogSelected += OnEcosystemDialogSelected;
         _category.SettingsDialogSelected += OnSettingsDialogSelected;
         _category.AboutDialogSelected += OnAboutDialogSelected;
         _category.QuitButtonSelected += OnQuitButtonSelected;
@@ -30,14 +31,13 @@ public class DesktopDialog : Dialog {
     public override void RemoveListeners() {
         base.RemoveListeners();
 
-        _category.EcosystemDialogSelected -= OnPolyhedrasDialogSelected;
+        _category.EcosystemDialogSelected -= OnEcosystemDialogSelected;
         _category.SettingsDialogSelected -= OnSettingsDialogSelected;
         _category.AboutDialogSelected -= OnAboutDialogSelected;
         _category.QuitButtonSelected -= OnQuitButtonSelected;
     }
 
-
-    private void OnPolyhedrasDialogSelected() => EcosystemDialogShowed?.Invoke();
+    private void OnEcosystemDialogSelected() => EcosystemDialogShowed?.Invoke();
 
     private void OnSettingsDialogSelected() => SettingsDialogShowed?.Invoke();
 

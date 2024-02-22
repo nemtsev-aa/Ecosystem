@@ -6,6 +6,7 @@ public class DialogMediator : IDisposable {
     private UIManager _uIManager;
 
     private DesktopDialog _desktopDialog;
+    private EcosystemCreatorDialog _ecosystemCreatorDialog;
     private SettingsDialog _settingsDialog;
     private AboutDialog _aboutDialog;
 
@@ -15,6 +16,7 @@ public class DialogMediator : IDisposable {
     public DialogMediator(UIManager uIManager, DialogSwitcher dialogSwitcher) {
         _uIManager = uIManager;
         _dialogSwitcher = dialogSwitcher;
+
     }
 
     public void Init() {
@@ -26,12 +28,13 @@ public class DialogMediator : IDisposable {
         _desktopDialog = _uIManager.GetDialogByType(DialogTypes.Desktop).GetComponent<DesktopDialog>();
         _settingsDialog = _uIManager.GetDialogByType(DialogTypes.Settings).GetComponent<SettingsDialog>();
         _aboutDialog = _uIManager.GetDialogByType(DialogTypes.About).GetComponent<AboutDialog>();
-        
+        _ecosystemCreatorDialog = _uIManager.GetDialogByType(DialogTypes.EcosystemCreator).GetComponent<EcosystemCreatorDialog>();
 
         _dialogs = new List<Dialog>() {
             _desktopDialog,
             _settingsDialog,
-            _aboutDialog
+            _aboutDialog,
+            _ecosystemCreatorDialog
         };
     }
 
@@ -73,7 +76,7 @@ public class DialogMediator : IDisposable {
         _desktopDialog.Quited -= OnQuited;
     }
 
-    private void OnEcosystemDialogShowed() => _dialogSwitcher.ShowDialog(DialogTypes.Ecosystem);
+    private void OnEcosystemDialogShowed() => _dialogSwitcher.ShowDialog(DialogTypes.EcosystemCreator);
 
     private void OnSettingsDialogShowed() => _dialogSwitcher.ShowDialog(DialogTypes.Settings);
 

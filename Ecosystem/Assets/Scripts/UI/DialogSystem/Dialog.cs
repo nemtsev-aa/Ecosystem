@@ -18,7 +18,7 @@ public abstract class Dialog : MonoBehaviour, IDisposable {
     public bool IsInit { get; protected set; } = false;
     public IReadOnlyList<UIPanel> DialogPanels => Panels;
     
-    public virtual void Init() {
+    public virtual void Init(Logger logger) {
         if (IsInit == true)
             return;
 
@@ -40,6 +40,9 @@ public abstract class Dialog : MonoBehaviour, IDisposable {
     }
 
     public virtual void ResetPanels() {
+        if (Panels.Count == 0)
+            return;
+
         foreach (var iPanel in Panels) {
             iPanel.Reset();
         }

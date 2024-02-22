@@ -14,7 +14,6 @@ public class MenuCategoryPanel : UIPanel {
     [SerializeField] private Button _quitButton;
 
     public void Init() {
-        Logger.Instance.Log("Начало метода [MenuCategoryPanel : Init]");
         AddListeners();
     }
 

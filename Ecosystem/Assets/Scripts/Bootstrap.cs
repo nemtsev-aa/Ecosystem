@@ -1,4 +1,5 @@
 using UnityEngine;
+using Zenject;
 
 public class Bootstrap : MonoBehaviour {
     [SerializeField] private UIManager _uIManager;
@@ -9,15 +10,20 @@ public class Bootstrap : MonoBehaviour {
     [SerializeField] private LivingCreaturePrefabs _prefabs;
     [SerializeField] private LivingCreatureSpawner _spawner;
 
-    private void Start() {
-        Logger.Instance.Log("Начало метода [Bootstrapper: Start]");
+    private Logger _logger;
 
-        _uIManager.Init(_companentsFactory, _dialogFactory);
+    [Inject]
+    public void Construct(Logger logger) {
+        _logger = logger;
+    }
+
+    private void Start() {
+        _logger.Log("Начало метода [Bootstrapper: Start]");
 
         _factory.Init(_prefabs);
         _spawner.Init(_factory);
+        _uIManager.Init();
 
-        Logger.Instance.Log("Конец метода [Bootstrapper: Start]");
+        _logger.Log("Конец метода [Bootstrapper: Start]");
     }
-
 }

@@ -7,10 +7,17 @@ public class GlobalInstaller : MonoInstaller {
     [SerializeField] private UICompanentPrefabs _uiCompanentPrefabs;
 
     public override void InstallBindings() {
+        BindLogger();
         BindUICompanentsConfig();
         BindConfigs();
         BindFactories();
         BindTimeCounter();
+    }
+
+    private void BindLogger() {
+        Logger logger = new Logger();
+
+        Container.BindInstance(logger).AsSingle();
     }
 
     private void BindConfigs() {

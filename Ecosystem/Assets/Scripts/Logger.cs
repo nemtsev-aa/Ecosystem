@@ -1,17 +1,9 @@
 using UnityEngine;
 using System.IO;
 
-public class Logger : MonoBehaviour {
-    public static Logger Instance;
-
-    void Awake() {
-        if (Instance != null) {
-            Destroy(gameObject);
-            return;
-        }
-
-        Instance = this;
-        DontDestroyOnLoad(gameObject);
+public class Logger {
+    public Logger() {
+        
     }
 
     public void Log(string message) {

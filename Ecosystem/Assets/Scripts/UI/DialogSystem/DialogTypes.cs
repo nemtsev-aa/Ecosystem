@@ -1,5 +1,5 @@
 public enum DialogTypes {
-    Ecosystem,
+    EcosystemCreator,
     Desktop,
     About,
     Settings

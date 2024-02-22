@@ -3,8 +3,9 @@ using UnityEngine;
 
 public class SettingsDialog : Dialog {
     [SerializeField] private UICompanentsFactory _companentsFactory;
-    public override void Init() {
-        base.Init();
+    public override void Init(Logger logger) {
+        base.Init(logger);
+
     }
 
     public override void InitializationPanels() {

@@ -9,7 +9,10 @@ public class DialogFactory {
     private RectTransform _dialogsParent;
 
     private static readonly Dictionary<Type, string> _prefabsDictionary = new Dictionary<Type, string>() {
+            {typeof(DesktopDialog), nameof(DesktopDialog)},
+            {typeof(EcosystemCreatorDialog), nameof(EcosystemCreatorDialog)},
             {typeof(SettingsDialog), nameof(SettingsDialog)},
+            {typeof(AboutDialog), nameof(AboutDialog)},
     };
 
     public DialogFactory(DiContainer container) {

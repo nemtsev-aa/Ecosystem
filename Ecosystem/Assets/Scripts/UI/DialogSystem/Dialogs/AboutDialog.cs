@@ -1,15 +1,8 @@
 public class AboutDialog : Dialog {
 
-    public override void Init() {
-        base.Init();
-    }
+    public override void Init(Logger logger) {
+        base.Init(logger);
 
-    public override void AddListeners() {
-        base.AddListeners();
-    }
-
-    public override void RemoveListeners() {
-        base.RemoveListeners();
     }
 
     public override void InitializationPanels() {
