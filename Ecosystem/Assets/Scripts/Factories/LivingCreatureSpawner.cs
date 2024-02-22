@@ -94,6 +94,7 @@ public class LivingCreatureSpawner : MonoBehaviour {
     }
 
     private void OnDestroyed(LivingCreature creature) {
+        Debug.Log(creature);
         creature.Destroyed -= OnDestroyed;
         _livingCreatures.Remove(creature);
         Destroy(creature.gameObject);

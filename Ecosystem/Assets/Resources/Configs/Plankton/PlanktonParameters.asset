@@ -22,9 +22,9 @@ MonoBehaviour:
   _damage: 20
   _eatingDuration: 0.1
   _hungerAppendSpeed: 0.05
-  _energyDecreaseSpeed: 0.05
-  _growingSpeed: 0.5
-  _reproductionSpeed: 0.1
+  _energyDecreaseSpeed: 0.1
+  _growingSpeed: 0.3
+  _reproductionSpeed: 0.06
   <FoodLayer>k__BackingField:
     serializedVersion: 2
     m_Bits: 256

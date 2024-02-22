@@ -11,6 +11,7 @@ public class DialogFactory {
     private static readonly Dictionary<Type, string> _prefabsDictionary = new Dictionary<Type, string>() {
             {typeof(DesktopDialog), nameof(DesktopDialog)},
             {typeof(EcosystemCreatorDialog), nameof(EcosystemCreatorDialog)},
+            {typeof(EcosystemGameDialog), nameof(EcosystemGameDialog)},
             {typeof(SettingsDialog), nameof(SettingsDialog)},
             {typeof(AboutDialog), nameof(AboutDialog)},
     };

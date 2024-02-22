@@ -38,9 +38,8 @@ public class ParameterView : Bar {
             }
             else 
             {
-                var percent = value / _parameter.MaxValue;
-                Filler.fillAmount = percent;
-                _fillingValue.text = $"{Mathf.RoundToInt(percent * 100)}%";
+                Filler.fillAmount = value;
+                _fillingValue.text = $"{Mathf.RoundToInt(Mathf.Clamp(value * 100, 0f, 100f))}%";
             }
         }
     }

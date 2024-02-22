@@ -36,7 +36,7 @@ public class AnimalParameters : LivingCreatureParameters, IDisposable {
     private float DecreaseHunger => _hungerAppendSpeed * 5f * Time.deltaTime;
     private float AppendHunger => _hungerAppendSpeed * Time.deltaTime;
     private float DecreaseEnergy => _energyDecreaseSpeed * Time.deltaTime;
-    private float AppendEnergy => _energyDecreaseSpeed * 2f * Time.deltaTime;
+    private float AppendEnergy => _energyDecreaseSpeed * 10f * Time.deltaTime;
     private float DeltaReproduction => _reproductionSpeed * Time.deltaTime;
     
     public Age Age => _age;
@@ -112,7 +112,10 @@ public class AnimalParameters : LivingCreatureParameters, IDisposable {
         _animal.Growed?.Invoke(_animal);
     }
 
-    private void OnReproductionDesireHasBeenMax() => _animal.Reproducted?.Invoke(_animal);
+    private void OnReproductionDesireHasBeenMax() {
+        _reproductionDesire.Value = 0f;
+        _animal.Reproducted?.Invoke(_animal);
+    }
 
     public void TakeDamage(float damage) {
         _health.Value -= damage;
@@ -123,11 +126,12 @@ public class AnimalParameters : LivingCreatureParameters, IDisposable {
     }
 
     public void AddEnergy() {
-        _energy.Value += AppendEnergy;
+        _energy.Value = 1f;
     }
 
     public void TakeEnergy() {
-        _energy.Value -= DecreaseEnergy;
+        if (_energy.Value > DecreaseEnergy)
+            _energy.Value -= DecreaseEnergy;                
     }
 
     public void AddHunger() {

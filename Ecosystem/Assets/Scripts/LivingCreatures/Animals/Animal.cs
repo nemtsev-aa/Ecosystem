@@ -1,4 +1,3 @@
-using System;
 using System.Collections.Generic;
 using UnityEditor;
 using UnityEngine;
@@ -10,7 +9,7 @@ public class Animal : LivingCreature {
     [field: SerializeField] public AnimalParameters Parameters { get; private set; }
     [field: SerializeField] public AnimalView View { get; private set; }
     public LivingCreatureStateMachineData StateMachineData => _data;
-    
+
     public Rigidbody2D Rigidbody { get; private set; }
     public bool IsMoved { get; set; }
     public AnimalConfig Config { get; private set; }
@@ -49,7 +48,7 @@ public class Animal : LivingCreature {
             Debug.Log(this.gameObject.name);
         }
     }
-
+#if UNITY_EDITOR
     private void OnDrawGizmosSelected() {
         if (_data != null) {
             Handles.color = Color.green;
@@ -58,4 +57,6 @@ public class Animal : LivingCreature {
             Handles.DrawSolidDisc(_data.TargetPosition, Vector3.forward, 0.1f);
         }
     }
+#endif
+
 }

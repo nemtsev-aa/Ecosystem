@@ -43,6 +43,7 @@ public class Plant : LivingCreature {
         }
     }
 
+#if UNITY_EDITOR
     private void OnDrawGizmosSelected() {
         if (_data != null) {
             Handles.color = Color.green;
@@ -51,4 +52,5 @@ public class Plant : LivingCreature {
             Handles.DrawSolidDisc(_data.TargetPosition, Vector3.forward, 0.1f);
         }
     }
+#endif
 }

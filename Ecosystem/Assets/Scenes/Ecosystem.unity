@@ -139,7 +139,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 1
+  m_IsActive: 0
 --- !u!4 &147997302
 Transform:
   m_ObjectHideFlags: 0
@@ -223,7 +223,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 1
+  m_IsActive: 0
 --- !u!4 &253033678
 Transform:
   m_ObjectHideFlags: 0
@@ -730,7 +730,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 1
+  m_IsActive: 0
 --- !u!4 &775286529
 Transform:
   m_ObjectHideFlags: 0
@@ -1060,52 +1060,6 @@ Rigidbody2D:
   m_SleepingMode: 1
   m_CollisionDetection: 1
   m_Constraints: 0
---- !u!1 &1017309967
-GameObject:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  serializedVersion: 6
-  m_Component:
-  - component: {fileID: 1017309969}
-  - component: {fileID: 1017309968}
-  m_Layer: 0
-  m_Name: EcosystemManager
-  m_TagString: Untagged
-  m_Icon: {fileID: 0}
-  m_NavMeshLayer: 0
-  m_StaticEditorFlags: 0
-  m_IsActive: 1
---- !u!114 &1017309968
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 1017309967}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 5db3cdd34819dfc4086ca3c5bea607a2, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  <ExistenceTime>k__BackingField: 0
-  <IsStarted>k__BackingField: 0
---- !u!4 &1017309969
-Transform:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 1017309967}
-  m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
-  m_LocalPosition: {x: 0, y: 0, z: 0}
-  m_LocalScale: {x: 1, y: 1, z: 1}
-  m_ConstrainProportionsScale: 0
-  m_Children: []
-  m_Father: {fileID: 1879610353}
-  m_RootOrder: 1
-  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &1090711285
 GameObject:
   m_ObjectHideFlags: 0
@@ -1285,7 +1239,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 1
+  m_IsActive: 0
 --- !u!4 &1513725303
 Transform:
   m_ObjectHideFlags: 0
@@ -1482,8 +1436,8 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   _animalSpawnField: {fileID: 1218517479}
   _plantSpawnField: {fileID: 290481628}
-  _animalSpawnCount: 1
-  _plantSpawnCount: 3
+  _animalSpawnCount: 0
+  _plantSpawnCount: 0
   _animalConfig: {fileID: 11400000, guid: 2f8684c5e5d7f3e439d497649a26199d, type: 2}
   _plantConfig: {fileID: 11400000, guid: b91909e6c4f0db043a13fc9898b1b7e3, type: 2}
 --- !u!4 &1714765083
@@ -1582,7 +1536,6 @@ Transform:
   m_ConstrainProportionsScale: 0
   m_Children:
   - {fileID: 1714765083}
-  - {fileID: 1017309969}
   m_Father: {fileID: 0}
   m_RootOrder: 3
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}

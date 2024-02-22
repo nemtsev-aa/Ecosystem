@@ -35,11 +35,13 @@ public class ReproductionState : IState {
     }
 
     private void StartAnimalReproduction() {
-        Animal animal1 = (Animal)LivingCreature;
-        Animal animal2 = (Animal)Data.ReproductionTarget;
-
         LivingCreature.Reproducted?.Invoke(LivingCreature);
-        Debug.Log($"StartPlantReproduction: {animal1} / {animal2}");
+
+        //Animal animal1 = (Animal)LivingCreature;
+        //Animal animal2 = (Animal)Data.ReproductionTarget;
+
+        //LivingCreature.Reproducted?.Invoke(LivingCreature);
+        //Debug.Log($"StartPlantReproduction: {animal1} / {animal2}");
     }
 
     private Vector2 GetRandomPosition() {

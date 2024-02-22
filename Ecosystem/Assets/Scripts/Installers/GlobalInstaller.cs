@@ -7,17 +7,25 @@ public class GlobalInstaller : MonoInstaller {
     [SerializeField] private UICompanentPrefabs _uiCompanentPrefabs;
 
     public override void InstallBindings() {
-        BindLogger();
+        BindServices();
         BindUICompanentsConfig();
         BindConfigs();
         BindFactories();
-        BindTimeCounter();
     }
 
-    private void BindLogger() {
+    private void BindServices() {
         Logger logger = new Logger();
-
         Container.BindInstance(logger).AsSingle();
+
+        TimeCounter timeCounter = new TimeCounter();
+        Container.BindInstance(timeCounter).AsSingle();
+        Container.BindInterfacesAndSelfTo<ITickable>().FromInstance(timeCounter).AsSingle();
+
+        EcosystemManager ecosystemManager = new EcosystemManager(_temperature, _humidity, timeCounter);
+        Container.BindInstance(ecosystemManager).AsSingle();
+
+        DialogMediator dialogMediator = new DialogMediator(_temperature, _humidity, ecosystemManager);
+        Container.BindInstance(dialogMediator).AsSingle();
     }
 
     private void BindConfigs() {
@@ -42,12 +50,5 @@ public class GlobalInstaller : MonoInstaller {
     private void BindFactories() {
         Container.Bind<DialogFactory>().AsSingle();
         Container.Bind<UICompanentsFactory>().AsSingle();
-    }
-
-    private void BindTimeCounter() {
-        TimeCounter timeCounter = new TimeCounter();
-
-        Container.BindInstance(timeCounter).AsSingle();
-        Container.BindInterfacesAndSelfTo<ITickable>().FromInstance(timeCounter).AsSingle();
     }
 }

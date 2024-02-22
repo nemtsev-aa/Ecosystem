@@ -29,6 +29,7 @@ public class WalkingState : MovementState {
         Parameters.AddGrowing();
         Parameters.TakeEnergy();
         Parameters.AddHunger();
+        Parameters.AddDesireReproduction();
 
         if (_energy <= 0.2f)
             StateSwitcher.SwitchState<IdlingState>();
@@ -46,15 +47,12 @@ public class WalkingState : MovementState {
             return;
         }
 
-        //Репродуктивный возраст
-        if (_age > 0.2f && _age < 0.5f) {
-            Parameters.AddDesireReproduction();
-
-            if (_energy >= 0.5f) {
-                MoveToReproduction();
-                return;
-            }
+        if (_energy >= 0.5f) {
+            MoveToReproduction();
+            return;
         }
+
+        SetRandomTargetPosition();
     }
 
     private void MoveToFood() {

@@ -3,23 +3,35 @@ using System;
 using System.Collections.Generic;
 
 public class DialogMediator : IDisposable {
+    public event Action CreatePlantClicked;
+    public event Action CreatePlanktonClicked;
+    public event Action RestartGameClicked;
+
     private UIManager _uIManager;
 
     private DesktopDialog _desktopDialog;
     private EcosystemCreatorDialog _ecosystemCreatorDialog;
+    private EcosystemGameDialog _ecosystemGameDialog;
     private SettingsDialog _settingsDialog;
     private AboutDialog _aboutDialog;
 
     private DialogSwitcher _dialogSwitcher;
     private List<Dialog> _dialogs;
 
-    public DialogMediator(UIManager uIManager, DialogSwitcher dialogSwitcher) {
+    private TemperatureConfig _temperatureConfig;
+    private HumidityConfig _humidityConfig;
+    private EcosystemManager _ecosystemManager;
+
+    public DialogMediator(TemperatureConfig temperatureConfig, HumidityConfig humidityConfig, EcosystemManager ecosystemManager) {
+        _temperatureConfig = temperatureConfig;
+        _humidityConfig = humidityConfig;
+        _ecosystemManager = ecosystemManager;
+    }
+
+    public void Init(UIManager uIManager, DialogSwitcher dialogSwitcher) {
         _uIManager = uIManager;
         _dialogSwitcher = dialogSwitcher;
 
-    }
-
-    public void Init() {
         GetDialogs();
         AddListeners();
     }
@@ -29,12 +41,14 @@ public class DialogMediator : IDisposable {
         _settingsDialog = _uIManager.GetDialogByType(DialogTypes.Settings).GetComponent<SettingsDialog>();
         _aboutDialog = _uIManager.GetDialogByType(DialogTypes.About).GetComponent<AboutDialog>();
         _ecosystemCreatorDialog = _uIManager.GetDialogByType(DialogTypes.EcosystemCreator).GetComponent<EcosystemCreatorDialog>();
+        _ecosystemGameDialog = _uIManager.GetDialogByType(DialogTypes.EcosystemGame).GetComponent<EcosystemGameDialog>();
 
         _dialogs = new List<Dialog>() {
             _desktopDialog,
             _settingsDialog,
             _aboutDialog,
-            _ecosystemCreatorDialog
+            _ecosystemCreatorDialog,
+            _ecosystemGameDialog
         };
     }
 
@@ -45,6 +59,8 @@ public class DialogMediator : IDisposable {
         }
 
         SubscribeToDesktopDialogActions();
+        SubscribeToEcosystemCreatorDialogActions();
+        SubscribeToEcosystemGameDialogActions();
     }
 
     private void RemoveListeners() {
@@ -54,7 +70,10 @@ public class DialogMediator : IDisposable {
         }
 
         UnSubscribeToDesktopDialogActions();
+        UnSubscribeToEcosystemCreatorDialogActions();
+        UnSubscribeToEcosystemGameDialogActions();
     }
+
 
     private void OnBackClicked() => _dialogSwitcher.ShowPreviousDialog();
 
@@ -84,6 +103,48 @@ public class DialogMediator : IDisposable {
 
     private void OnQuited() => Application.Quit();
 
+    #endregion
+
+    #region EcosystemCreatorDialogActions
+    private void SubscribeToEcosystemCreatorDialogActions() {
+        _ecosystemCreatorDialog.ParameterVariantSelected += OnParameterVariantSelected;
+    }
+
+    private void UnSubscribeToEcosystemCreatorDialogActions() {
+        _ecosystemCreatorDialog.ParameterVariantSelected -= OnParameterVariantSelected;
+    }
+
+    private void OnParameterVariantSelected(EcosystemParameterVariants temperature, EcosystemParameterVariants humidity) {
+        _temperatureConfig.Variant = temperature;
+        _humidityConfig.Variant = humidity;
+
+        _dialogSwitcher.ShowDialog(DialogTypes.EcosystemGame);
+        _ecosystemManager.StartSimulation();
+    }
+    #endregion
+
+    #region EcosystemGameDialogActions
+    private void SubscribeToEcosystemGameDialogActions() {
+        _ecosystemGameDialog.CreatePlantClicked += OnCreatePlantClicked;
+        _ecosystemGameDialog.CreatePlanktonClicked += OnCreatePlanktonClicked;
+        _ecosystemGameDialog.RestartGameClicked += OnRestartGameClicked;
+    }
+
+    private void OnCreatePlantClicked() {
+        CreatePlantClicked?.Invoke();
+    }
+
+    private void OnCreatePlanktonClicked() {
+        CreatePlanktonClicked?.Invoke();
+    }
+
+    private void OnRestartGameClicked() {
+        RestartGameClicked?.Invoke();
+    }
+
+    private void UnSubscribeToEcosystemGameDialogActions() {
+        
+    }
     #endregion
 
     public void Dispose() {

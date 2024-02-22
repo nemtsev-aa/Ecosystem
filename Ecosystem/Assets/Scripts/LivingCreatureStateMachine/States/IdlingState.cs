@@ -7,7 +7,7 @@ public class IdlingState : IState {
 
     private float _energy => _parameters.Energy.Value;
     private float _hunger => _parameters.Hunger.Value;
-    private float _damage => _parameters.Damage / 10f;
+    private float _damage => _parameters.Damage / 100f;
 
     public IdlingState(LivingCreatureStateMachineData data, Animal animal) {
         _animal = animal;
@@ -30,7 +30,6 @@ public class IdlingState : IState {
         _parameters.AddEnergy();
         _parameters.TakeDamage(_damage);
 
-        if (_energy > 0.4f) 
-            StateSwitcher.SwitchState<WalkingState>();
+        StateSwitcher.SwitchState<WalkingState>();
     }
 }

@@ -22,7 +22,7 @@ public class Bootstrap : MonoBehaviour {
 
         _factory.Init(_prefabs);
         _spawner.Init(_factory);
-        _uIManager.Init();
+        _uIManager.Init(_spawner);
 
         _logger.Log("Конец метода [Bootstrapper: Start]");
     }

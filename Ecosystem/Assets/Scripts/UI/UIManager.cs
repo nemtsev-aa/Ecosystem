@@ -17,8 +17,10 @@ public class UIManager : MonoBehaviour, IDisposable {
     private Dictionary<DialogTypes, Dialog> _dialogsDictionary;
     private List<Dialog> _dialogs;
 
+    private LivingCreatureSpawner _spawner;
+
     [Inject]
-    public void Construct(UICompanentsFactory companentsFactory, DialogFactory dialogFactory, Logger logger) {
+    public void Construct(UICompanentsFactory companentsFactory, DialogFactory dialogFactory, Logger logger, DialogMediator dialogMediator) {
         _companentsFactory = companentsFactory;
         _logger = logger;
 
@@ -28,16 +30,17 @@ public class UIManager : MonoBehaviour, IDisposable {
         CreateDialogs();
 
         _dialogSwitcher = new DialogSwitcher(this);
-        _dialogMediator = new DialogMediator(this, _dialogSwitcher);
-        _dialogMediator.Init();
 
-        //_dialogMediator.PolyhedraSelected += OnPolyhedraSelected;
-        //_dialogMediator.PolyhedraCompanentSelected += OnPolyhedraCompanentSelected;
-        //_dialogMediator.JoysticValueChanged += OnJoysticValueChanged;
-        //_dialogMediator.ColorSettingsChanged += OnColorSettingsChanged;
+        _dialogMediator = dialogMediator;
+        _dialogMediator.Init(this, _dialogSwitcher);
+
+        _dialogMediator.CreatePlanktonClicked += OnCreatePlankton;
+        _dialogMediator.CreatePlantClicked += OnCreatePlant; 
     }
 
-    public void Init() {
+    public void Init(LivingCreatureSpawner spawner) {
+        _spawner = spawner;
+
         _dialogSwitcher.ShowDialog(DialogTypes.Desktop);
     }
 
@@ -58,6 +61,7 @@ public class UIManager : MonoBehaviour, IDisposable {
                 { DialogTypes.Settings, _dialogFactory.GetDialog<SettingsDialog>()},
                 { DialogTypes.About, _dialogFactory.GetDialog<AboutDialog>()},
                 { DialogTypes.EcosystemCreator, _dialogFactory.GetDialog<EcosystemCreatorDialog>()},
+                { DialogTypes.EcosystemGame, _dialogFactory.GetDialog<EcosystemGameDialog>()}
             };
 
         foreach (var iDialog in _dialogsDictionary.Values) {
@@ -66,18 +70,12 @@ public class UIManager : MonoBehaviour, IDisposable {
         }
     }
 
-    //private void OnPolyhedraSelected(PolyhedraConfig config) => ModelsRotated?.Invoke(config);
+    private void OnCreatePlant() => _spawner.CreatePlant();
 
-    //private void OnPolyhedraCompanentSelected(PolyhedrasCompanentTypes type) => CompanentBlinked?.Invoke(type);
-
-    //private void OnJoysticValueChanged(float horizontal, float vertical) => InputValueChanged?.Invoke(horizontal, vertical);
-
-    //private void OnColorSettingsChanged() => ColorSettingsChanged?.Invoke();
+    private void OnCreatePlankton() => _spawner.CreateAnimal();
 
     public void Dispose() {
-        //_dialogMediator.PolyhedraSelected -= OnPolyhedraSelected;
-        //_dialogMediator.PolyhedraCompanentSelected -= OnPolyhedraCompanentSelected;
-        //_dialogMediator.JoysticValueChanged -= OnJoysticValueChanged;
-        //_dialogMediator.ColorSettingsChanged -= OnColorSettingsChanged;
+        _dialogMediator.CreatePlanktonClicked -= OnCreatePlankton;
+        _dialogMediator.CreatePlantClicked -= OnCreatePlant;
     }
 }
