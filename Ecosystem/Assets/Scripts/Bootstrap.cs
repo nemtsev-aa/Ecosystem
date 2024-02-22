@@ -1,20 +1,23 @@
-using System.Collections.Generic;
 using UnityEngine;
 
 public class Bootstrap : MonoBehaviour {
+    [SerializeField] private UIManager _uIManager;
+    [SerializeField] private DialogFactory _dialogFactory;
+    [SerializeField] private UICompanentsFactory _companentsFactory;
+
     [SerializeField] private LivingCreatureFactory _factory;
     [SerializeField] private LivingCreaturePrefabs _prefabs;
     [SerializeField] private LivingCreatureSpawner _spawner;
 
-    //[SerializeField] private List<Plant> _plants;
-    //[SerializeField] private PlantConfig _plantConfig;
-
     private void Start() {
+        Logger.Instance.Log("Начало метода [Bootstrapper: Start]");
+
+        _uIManager.Init(_companentsFactory, _dialogFactory);
+
         _factory.Init(_prefabs);
         _spawner.Init(_factory);
 
-        //foreach (var iPlant in _plants) {
-        //    iPlant.Init(_plantConfig);
-        //}
+        Logger.Instance.Log("Конец метода [Bootstrapper: Start]");
     }
+
 }

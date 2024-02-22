@@ -8,8 +8,8 @@ public class LivingCreatureSpawner : MonoBehaviour {
     [SerializeField] private Transform _animalSpawnField;
     [SerializeField] private Transform _plantSpawnField;
 
-    [SerializeField, Range(1, 100)] private int _animalSpawnCount;
-    [SerializeField, Range(1, 100)] private int _plantSpawnCount;
+    [SerializeField, Range(0, 100)] private int _animalSpawnCount;
+    [SerializeField, Range(0, 100)] private int _plantSpawnCount;
 
     [SerializeField] private AnimalConfig _animalConfig;
     [SerializeField] private PlantConfig _plantConfig;

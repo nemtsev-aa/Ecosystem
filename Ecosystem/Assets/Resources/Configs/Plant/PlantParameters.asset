@@ -1,0 +1,21 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: fa5275ac59f10634794bb2e8340573d4, type: 3}
+  m_Name: PlantParameters
+  m_EditorClassIdentifier: 
+  _dynamicParameterConfigs:
+  - {fileID: 11400000, guid: 265b33d06147dc2468b190d8f51c9fa6, type: 2}
+  - {fileID: 11400000, guid: 2b4301ab440d2584baef89c1ac4bdb27, type: 2}
+  - {fileID: 11400000, guid: 9af0145454c2e3b43a2429f82bb79994, type: 2}
+  - {fileID: 11400000, guid: 60492a5da987aa24684a829bd8531c61, type: 2}
+  _growingSpeed: 0.3
+  _reproductionSpeed: 0.07

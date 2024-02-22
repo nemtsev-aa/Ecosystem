@@ -16,17 +16,17 @@ public class ParameterView : Bar {
         OnValueChanged(_parameter.Value);
     }
 
-    public void AddListeners() {
+    public override void AddListeners() {
         if (_parameter != null)
             _parameter.ValueChanged += OnValueChanged;
     }
 
-    public void RemoveListeners() {
+    public override void RemoveListeners() {
         if (_parameter != null)
             _parameter.ValueChanged -= OnValueChanged;
     }
 
-    public void Reset() {
+    public override void Reset() {
         Filler.fillAmount = _parameter.StartFilling;
     }
 
@@ -44,4 +44,6 @@ public class ParameterView : Bar {
             }
         }
     }
+
+    protected override void OnValueChanged(float currentValue, float maxValue) { }
 }

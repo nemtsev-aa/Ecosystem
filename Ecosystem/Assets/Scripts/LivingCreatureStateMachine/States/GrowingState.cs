@@ -27,7 +27,14 @@ public class GrowingState : IState {
         }
             
         if (_livingCreature is Plant) {
-            _livingCreature.transform.localScale += Vector3.one * 0.02f;
+            var plant = (Plant)_livingCreature;
+
+            if (plant.Parameters.Age.CurrentFilling < 0.7f)
+                _livingCreature.transform.localScale += Vector3.one * 0.02f;
+
+            if (plant.Parameters.Age.CurrentFilling >= 0.7f)
+                _livingCreature.transform.localScale -= Vector3.one * 0.01f;
+
             StateSwitcher.SwitchState<PlantIdlingState>();
         }   
     }

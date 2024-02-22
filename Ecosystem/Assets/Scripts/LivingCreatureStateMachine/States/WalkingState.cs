@@ -30,6 +30,9 @@ public class WalkingState : MovementState {
         Parameters.TakeEnergy();
         Parameters.AddHunger();
 
+        if (_energy <= 0.2f)
+            StateSwitcher.SwitchState<IdlingState>();
+
         if (_grow == 0f)
             StateSwitcher.SwitchState<GrowingState>();
 
@@ -52,11 +55,6 @@ public class WalkingState : MovementState {
                 return;
             }
         }
-
-        if (_energy <= 0.2f)
-            StateSwitcher.SwitchState<IdlingState>();
-        else
-            SetRandomTargetPosition();
     }
 
     private void MoveToFood() {

@@ -23,7 +23,7 @@ public class PlantIdlingState : IState {
         _parameters.AddGrowing();
         _parameters.AddDesireReproduction();
 
-        if (_parameters.Grow.Value == 0f)
+        if (_parameters.Grow.Value == 0f && _parameters.Age.CurrentFilling < 1f)
             StateSwitcher.SwitchState<GrowingState>();
 
         if (_parameters.ReproductionDesire.Value >= 1f)

@@ -2,6 +2,7 @@ using System;
 using UnityEngine;
 
 public abstract class LivingCreature : MonoBehaviour {
+    public Action<LivingCreature> Growed;
     public Action<LivingCreature> Destroyed;
     public Action<LivingCreature> Reproducted;
 

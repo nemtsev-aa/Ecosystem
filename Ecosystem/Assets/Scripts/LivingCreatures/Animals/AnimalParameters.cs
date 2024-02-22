@@ -4,18 +4,18 @@ using System.Collections.Generic;
 using System.Linq;
 
 [CreateAssetMenu(fileName = nameof(AnimalParameters), menuName = "Configs/LivingCreatureParameters/" + nameof(AnimalParameters))]
-public class AnimalParameters : LivingCreatureParameters {
-    [SerializeField] private List<LivingCreatureParameter> _dynamicParameterConfigs;
+public class AnimalParameters : LivingCreatureParameters, IDisposable {
+    [SerializeField] private List<LivingCreatureParameterConfig> _dynamicParameterConfigs;
 
     [Header("Static")]
     [SerializeField, Range(1, 100)] private float _damage;
 
     [Header("TimeDurations")]
-    [SerializeField, Range(1, 20)] private float _eatingDuration;
-    [SerializeField, Range(1, 200)] private float _hungerEndTime;
-    [SerializeField, Range(1, 200)] private float _energyEndTime;
-    [SerializeField, Range(1, 2000)] private float _growingEndTime;
-    [SerializeField, Range(1, 2000)] private float _reproductionEndTime;
+    [SerializeField, Range(0, 1)] private float _eatingDuration;
+    [SerializeField, Range(0, 1)] private float _hungerAppendSpeed;
+    [SerializeField, Range(0, 1)] private float _energyDecreaseSpeed;
+    [SerializeField, Range(0, 1)] private float _growingSpeed;
+    [SerializeField, Range(0, 1)] private float _reproductionSpeed;
 
     private Age _age;
     private Grow _grow;
@@ -25,16 +25,19 @@ public class AnimalParameters : LivingCreatureParameters {
     private Energy _energy;
     private Hunger _hunger;
     private ReproductionDesire _reproductionDesire;
-    private List<LivingCreatureParameter> _dynamicParameters = new List<LivingCreatureParameter>();
+
+    private List<LivingCreatureParameterConfig> _dynamicParameters = new List<LivingCreatureParameterConfig>();
 
     [field: SerializeField] public LayerMask FoodLayer { get; private set; }
     [field: SerializeField] public LayerMask EnemyLayer { get; private set; }
     [field: SerializeField] public LayerMask ReproductionLayer { get; private set; }
     
-    private float DeltaGrowing => Time.deltaTime / _growingEndTime;
-    private float DeltaHunger => Time.deltaTime / _hungerEndTime;
-    private float DeltaEnergy => Time.deltaTime / _energyEndTime;
-    private float DeltaReproduction => Time.deltaTime / _reproductionEndTime;
+    private float DeltaGrowing => _growingSpeed * Time.deltaTime;
+    private float DecreaseHunger => _hungerAppendSpeed * 5f * Time.deltaTime;
+    private float AppendHunger => _hungerAppendSpeed * Time.deltaTime;
+    private float DecreaseEnergy => _energyDecreaseSpeed * Time.deltaTime;
+    private float AppendEnergy => _energyDecreaseSpeed * 2f * Time.deltaTime;
+    private float DeltaReproduction => _reproductionSpeed * Time.deltaTime;
     
     public Age Age => _age;
     public Health Health => _health;
@@ -44,69 +47,96 @@ public class AnimalParameters : LivingCreatureParameters {
     public ReproductionDesire ReproductionDesire => _reproductionDesire;
     public float Damage => _damage;
     public float EatingDuration => _eatingDuration;
-
     public bool IsMoved { get; set; }
-    public bool IsDead { get; set; } = false;
 
     public void Init(Animal animal) {
         _animal = animal;
 
-        _health = GetClone<Health>();
-        _age = GetClone<Age>();
-        _grow = GetClone<Grow>();
-        _energy = GetClone<Energy>();
-        _hunger = GetClone<Hunger>();
-        _reproductionDesire = GetClone<ReproductionDesire>();
-
+        _health = new Health(GetClone<HealthConfig>());
+        _age = new Age(GetClone<AgeConfig>());
+        _grow = new Grow(GetClone<GrowConfig>());
+        _energy = new Energy(GetClone<EnergyConfig>());
+        _hunger = new Hunger(GetClone<HungerConfig>());
+        _reproductionDesire = new ReproductionDesire(GetClone<ReproductionDesireConfig>());
         _maxHealth = _health.MaxValue;
+
+        AddSubscribers();
     }
+
+    private void AddSubscribers() {
+        _age.HasBeenMax += OnAgeHasBeenMax;
+        _health.HasBeenMin += OnHealthHasBeenMin;
+        _grow.HasBeenMax += OnGrowHasBeenMax;
+        _energy.HasBeenMin += OnEnergyHasBeenMin;
+        _hunger.HasBeenMax += OnHungerHasBeenMax;
+        _reproductionDesire.HasBeenMax += OnReproductionDesireHasBeenMax;
+    }
+
+    private void RemoveSubscribers() {
+        _age.HasBeenMax -= OnAgeHasBeenMax;
+        _health.HasBeenMin -= OnHealthHasBeenMin;
+        _grow.HasBeenMax -= OnGrowHasBeenMax;
+        _energy.HasBeenMin -= OnEnergyHasBeenMin;
+        _hunger.HasBeenMin -= OnHungerHasBeenMin;
+        _reproductionDesire.HasBeenMax -= OnReproductionDesireHasBeenMax;
+    }
+
+    private T GetClone<T>() where T : LivingCreatureParameterConfig {
+        var config = (T)_dynamicParameterConfigs.FirstOrDefault(parameter => parameter is T);
+        return Instantiate(config);
+    }
+
+    private void OnHungerHasBeenMax() {
+        TakeEnergy();
+    }
+
+    private void OnHungerHasBeenMin() {
+        AddDesireReproduction();
+    }
+
+    private void OnEnergyHasBeenMin() {
+         TakeDamage(_damage / 10f);
+    }
+
+    private void OnAgeHasBeenMax() => _animal.Destroyed?.Invoke(_animal);
+
+    private void OnHealthHasBeenMin() => _animal.Destroyed?.Invoke(_animal);
+
+    private void OnGrowHasBeenMax() {
+        if (_age.Value >= _age.MaxValue)
+            return;
+
+        _grow.Value = 0f;
+        _age.Value++;
+
+        _animal.Growed?.Invoke(_animal);
+    }
+
+    private void OnReproductionDesireHasBeenMax() => _animal.Reproducted?.Invoke(_animal);
 
     public void TakeDamage(float damage) {
         _health.Value -= damage;
-
-        if (_health.Value <= 0) {
-            _animal.Destroyed?.Invoke(_animal);
-        }  
     }
 
     public void AddHealing(float healing) {
         _health.Value += healing;
-
-        if (_health.Value >= _maxHealth && _energy.Value < 1f)
-            AddEnergy();
     }
 
     public void AddEnergy() {
-        if (_energy.Value >= 1f)
-            _health.Value += DeltaEnergy;
-        else
-            _energy.Value += DeltaEnergy * 2f;
+        _energy.Value += AppendEnergy;
     }
 
     public void TakeEnergy() {
-        if (_energy.Value > DeltaEnergy)
-            _energy.Value -= DeltaEnergy;
-        else
-            _energy.Value = 0f;
-
-        if (_energy.Value == 0f) {
-            TakeDamage(DeltaEnergy);
-        }
+        _energy.Value -= DecreaseEnergy;
     }
 
     public void AddHunger() {
-        _hunger.Value += DeltaHunger;
-
-        if (_hunger.Value >= 1) {
-            _hunger.Value = 1f;
-            TakeEnergy();
-        }
+        _hunger.Value += AppendHunger;
     }
 
     public void TakeHunger() {
+        _hunger.Value -= DecreaseHunger;
         AddEnergy();
-
-        _hunger.Value -= DeltaHunger * 10f;
     }
 
     public void AddDesireReproduction() {
@@ -120,20 +150,12 @@ public class AnimalParameters : LivingCreatureParameters {
     }
     
     public void AddGrowing() {
-        _grow.Value += DeltaGrowing;
-
-        if (_grow.Value >= 1) {
-            _grow.Value = 0f;
-
-            _age.Value++;
-
-            if (_age.Value >= _age.MaxValue)
-                _animal.Destroyed?.Invoke(_animal);
+        if (_energy.Value >= 0.2f) {
+            _grow.Value += DeltaGrowing;
         }
     }
 
-    private T GetClone<T>() where T : LivingCreatureParameter {
-        var config = (T)_dynamicParameterConfigs.FirstOrDefault(parameter => parameter is T);
-        return Instantiate(config);
+    public void Dispose() {
+        RemoveSubscribers();
     }
 }
