@@ -14,17 +14,18 @@ public class Animal : LivingCreature {
     public bool IsMoved { get; set; }
     public AnimalConfig Config { get; private set; }
 
-    public override void Init(LivingCreatureConfig config) {
+    public override void Init(LivingCreatureConfig config, EcosystemParametersConfig ecosystemParametersConfig) {
         Config = (AnimalConfig)config;
 
         AnimalParameters parameters = Instantiate(Parameters);
         Parameters = parameters;
-        Parameters.Init(this);
+        Parameters.Init(this, ecosystemParametersConfig);
 
         Rigidbody = GetComponent<Rigidbody2D>();
 
+        var temperatureFactor = ecosystemParametersConfig.TemperatureConfig.GetValue();
         _data = new LivingCreatureStateMachineData();
-        _data.Speed = Config.Speed;
+        _data.Speed = Config.Speed * temperatureFactor;
 
         _states = new List<IState>() {
             new IdlingState(_data, this),

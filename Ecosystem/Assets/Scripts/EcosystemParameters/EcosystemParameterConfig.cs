@@ -36,19 +36,19 @@ public class EcosystemParameterConfig : ScriptableObject {
     public float GetValue() {
         switch (_variant) {
             case EcosystemParameterVariants.ExtraLow:
-                return 0.8f;
+                return 0.5f;
 
             case EcosystemParameterVariants.Low:
-                return 0.9f;
+                return 0.75f;
 
             case EcosystemParameterVariants.Normal:
                 return 1;
 
             case EcosystemParameterVariants.High:
-                return 1.1f;
+                return 1.25f;
 
             case EcosystemParameterVariants.ExtraHigh:
-                return 1.2f;
+                return 1.5f;
 
             default:
                 throw new ArgumentException($"Invalid EcosystemParameterVariant: {_variant}");

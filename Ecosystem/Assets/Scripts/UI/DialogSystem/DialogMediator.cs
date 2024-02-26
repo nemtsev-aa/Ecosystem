@@ -3,9 +3,7 @@ using System;
 using System.Collections.Generic;
 
 public class DialogMediator : IDisposable {
-    public event Action CreatePlantClicked;
-    public event Action CreatePlanktonClicked;
-    public event Action RestartGameClicked;
+    public const float MaxLivingCreatureCount = 30f;
 
     private UIManager _uIManager;
 
@@ -18,20 +16,18 @@ public class DialogMediator : IDisposable {
     private DialogSwitcher _dialogSwitcher;
     private List<Dialog> _dialogs;
 
-    private TemperatureConfig _temperature;
-    private HumidityConfig _humidity;
-    private EcosystemManager _ecosystemManager;
 
-    public DialogMediator(EcosystemParametersConfig ecosystemParametersConfig, EcosystemManager ecosystemManager) {
-        _temperature = ecosystemParametersConfig.TemperatureConfig;
-        _humidity = ecosystemParametersConfig.HumidityConfig;
+    private EcosystemManager _ecosystemManager;
+    private LivingCreatureSpawner _spawner => _uIManager.Spawner;
+
+    public DialogMediator(EcosystemManager ecosystemManager) {
         _ecosystemManager = ecosystemManager;
     }
 
     public void Init(UIManager uIManager, DialogSwitcher dialogSwitcher) {
         _uIManager = uIManager;
         _dialogSwitcher = dialogSwitcher;
-
+        
         GetDialogs();
         AddListeners();
     }
@@ -74,7 +70,6 @@ public class DialogMediator : IDisposable {
         UnSubscribeToEcosystemGameDialogActions();
     }
 
-
     private void OnBackClicked() => _dialogSwitcher.ShowPreviousDialog();
 
     private void OnSettingsClicked() => _dialogSwitcher.ShowDialog(DialogTypes.Settings);
@@ -93,6 +88,7 @@ public class DialogMediator : IDisposable {
         _desktopDialog.SettingsDialogShowed -= OnSettingsDialogShowed;
         _desktopDialog.AboutDialogShowed -= OnAboutDialogShowed;
         _desktopDialog.Quited -= OnQuited;
+        _desktopDialog.BackClicked -= OnQuited;
     }
 
     private void OnEcosystemDialogShowed() => _dialogSwitcher.ShowDialog(DialogTypes.EcosystemCreator);
@@ -115,9 +111,6 @@ public class DialogMediator : IDisposable {
     }
 
     private void OnParameterVariantSelected(EcosystemParameterVariants temperature, EcosystemParameterVariants humidity) {
-        _temperature.Variant = temperature;
-        _humidity.Variant = humidity;
-
         _dialogSwitcher.ShowDialog(DialogTypes.EcosystemGame);
     }
     #endregion
@@ -127,33 +120,62 @@ public class DialogMediator : IDisposable {
         _ecosystemGameDialog.CreatePlantClicked += OnCreatePlantClicked;
         _ecosystemGameDialog.CreatePlanktonClicked += OnCreatePlanktonClicked;
         _ecosystemGameDialog.RestartGameClicked += OnRestartGameClicked;
+        _ecosystemGameDialog.ViewsVisibleChanged += OnViewsVisibleChanged;
+
+        _spawner.AnimalCountChanged += OnAnimalCountChanged;
+        _spawner.PlantCountChanged += OnPlantCountChanged;
     }
 
     private void OnCreatePlantClicked() {
         if (_ecosystemManager.IsStarted == false)
             _ecosystemManager.StartSimulation();
 
-        CreatePlantClicked?.Invoke();
+        _spawner.CreatePlant();
     }
 
     private void OnCreatePlanktonClicked() {
         if (_ecosystemManager.IsStarted == false)
             _ecosystemManager.StartSimulation();
 
-        CreatePlanktonClicked?.Invoke();
+        _spawner.CreateAnimal();
     }
 
     private void OnRestartGameClicked() {
-        RestartGameClicked?.Invoke();
+        _spawner.Reset();
+        _ecosystemGameDialog.ShowPanel<ResultPanel>(false);
+
+        OnBackClicked();
     }
+    
+    private void OnPlantCountChanged(int plantsCount) {
+        if (plantsCount == 0 || plantsCount > MaxLivingCreatureCount) {
+            _ecosystemGameDialog.ShowPanel<ResultPanel>(true);
+            _ecosystemManager.StopSimulation();
+        }  
+    }
+
+    private void OnAnimalCountChanged(int animalCount) {
+        if (animalCount == 0 || animalCount > MaxLivingCreatureCount) {
+            _ecosystemGameDialog.ShowPanel<ResultPanel>(true);
+            _ecosystemManager.StopSimulation();
+        }    
+    }
+    
+    private void OnViewsVisibleChanged(bool status) => _spawner.ShowViews(status);
 
     private void UnSubscribeToEcosystemGameDialogActions() {
         _ecosystemGameDialog.CreatePlantClicked -= OnCreatePlantClicked;
         _ecosystemGameDialog.CreatePlanktonClicked -= OnCreatePlanktonClicked;
         _ecosystemGameDialog.RestartGameClicked -= OnRestartGameClicked;
+        _ecosystemGameDialog.ViewsVisibleChanged -= OnViewsVisibleChanged;
+
+        _spawner.AnimalCountChanged -= OnAnimalCountChanged;
+        _spawner.PlantCountChanged -= OnPlantCountChanged;
     }
+    
     #endregion
 
+   
     public void Dispose() {
         RemoveListeners();
     }

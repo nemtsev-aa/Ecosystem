@@ -10,15 +10,16 @@ public class Plant : LivingCreature {
     [field: SerializeField] public PlantView View { get; private set; }
 
     public PlantConfig Config { get; private set; }
+
     public Rigidbody2D Rigidbody { get; private set; }
     public bool IsMoved { get; set; }
 
-    public override void Init(LivingCreatureConfig config) {
+    public override void Init(LivingCreatureConfig config, EcosystemParametersConfig ecosystemParametersConfig) {
         Config = (PlantConfig)config;
-
+        
         PlantParameters parameters = Instantiate(Parameters);
         Parameters = parameters;
-        Parameters.Init(this);
+        Parameters.Init(this, ecosystemParametersConfig);
 
         Rigidbody = GetComponent<Rigidbody2D>();
 

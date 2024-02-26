@@ -17,7 +17,7 @@ public class UIManager : MonoBehaviour, IDisposable {
     private Dictionary<DialogTypes, Dialog> _dialogsDictionary;
     private List<Dialog> _dialogs;
 
-    private LivingCreatureSpawner _spawner;
+    public LivingCreatureSpawner Spawner { get; private set; }
 
     [Inject]
     public void Construct(UICompanentsFactory companentsFactory, DialogFactory dialogFactory, Logger logger, DialogMediator dialogMediator) {
@@ -27,19 +27,16 @@ public class UIManager : MonoBehaviour, IDisposable {
         _dialogFactory = dialogFactory;
         _dialogFactory.SetDialogsParent(_dialogsParent);
 
-        CreateDialogs();
-
-        _dialogSwitcher = new DialogSwitcher(this);
-
-        _dialogMediator = dialogMediator;
-        _dialogMediator.Init(this, _dialogSwitcher);
-
-        _dialogMediator.CreatePlanktonClicked += OnCreatePlankton;
-        _dialogMediator.CreatePlantClicked += OnCreatePlant; 
+        _dialogMediator = dialogMediator; 
     }
 
     public void Init(LivingCreatureSpawner spawner) {
-        _spawner = spawner;
+        Spawner = spawner;
+
+        CreateDialogs();
+
+        _dialogSwitcher = new DialogSwitcher(this);
+        _dialogMediator.Init(this, _dialogSwitcher);
 
         _dialogSwitcher.ShowDialog(DialogTypes.Desktop);
     }
@@ -70,12 +67,8 @@ public class UIManager : MonoBehaviour, IDisposable {
         }
     }
 
-    private void OnCreatePlant() => _spawner.CreatePlant();
-
-    private void OnCreatePlankton() => _spawner.CreateAnimal();
 
     public void Dispose() {
-        _dialogMediator.CreatePlanktonClicked -= OnCreatePlankton;
-        _dialogMediator.CreatePlantClicked -= OnCreatePlant;
+
     }
 }

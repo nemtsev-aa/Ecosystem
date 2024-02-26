@@ -17,9 +17,12 @@ public class AnimalParameters : LivingCreatureParameters, IDisposable {
     [SerializeField, Range(0, 1)] private float _growingSpeed;
     [SerializeField, Range(0, 1)] private float _reproductionSpeed;
 
+    private Animal _animal;
+    private float _temperatureFactor;
+    private float _humidityFactor;
+
     private Age _age;
     private Grow _grow;
-    private Animal _animal;
     private Health _health;
     private float _maxHealth;
     private Energy _energy;
@@ -32,12 +35,12 @@ public class AnimalParameters : LivingCreatureParameters, IDisposable {
     [field: SerializeField] public LayerMask EnemyLayer { get; private set; }
     [field: SerializeField] public LayerMask ReproductionLayer { get; private set; }
     
-    private float DeltaGrowing => _growingSpeed * Time.deltaTime;
+    private float DeltaGrowing => _growingSpeed * _temperatureFactor * Time.deltaTime;
     private float DecreaseHunger => _hungerAppendSpeed * 5f * Time.deltaTime;
-    private float AppendHunger => _hungerAppendSpeed * Time.deltaTime;
-    private float DecreaseEnergy => _energyDecreaseSpeed * Time.deltaTime;
+    private float AppendHunger => _hungerAppendSpeed * _temperatureFactor * Time.deltaTime;
+    private float DecreaseEnergy => _energyDecreaseSpeed * _temperatureFactor * Time.deltaTime;
     private float AppendEnergy => _energyDecreaseSpeed * 10f * Time.deltaTime;
-    private float DeltaReproduction => _reproductionSpeed * Time.deltaTime;
+    private float DeltaReproduction => _reproductionSpeed * _temperatureFactor * Time.deltaTime;
     
     public Age Age => _age;
     public Health Health => _health;
@@ -49,11 +52,18 @@ public class AnimalParameters : LivingCreatureParameters, IDisposable {
     public float EatingDuration => _eatingDuration;
     public bool IsMoved { get; set; }
 
-    public void Init(Animal animal) {
+    public void Init(Animal animal, EcosystemParametersConfig ecosystemConfig) {
         _animal = animal;
 
+        _temperatureFactor = ecosystemConfig.TemperatureConfig.GetValue();
+        _humidityFactor = ecosystemConfig.HumidityConfig.GetValue();
+
         _health = new Health(GetClone<HealthConfig>());
+        _health.MaxValue += _temperatureFactor * _humidityFactor;
+
         _age = new Age(GetClone<AgeConfig>());
+        _age.MaxValue += _temperatureFactor;
+
         _grow = new Grow(GetClone<GrowConfig>());
         _energy = new Energy(GetClone<EnergyConfig>());
         _hunger = new Hunger(GetClone<HungerConfig>());

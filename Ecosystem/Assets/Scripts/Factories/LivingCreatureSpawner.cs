@@ -1,3 +1,4 @@
+using System;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
@@ -5,22 +6,34 @@ using UnityEngine;
 public class LivingCreatureSpawner : MonoBehaviour {
     private const float SpawnCooldown = 0.1f;
 
+    public event Action<int> AnimalCountChanged;
+    public event Action<int> PlantCountChanged;
+
     [SerializeField] private Transform _animalSpawnField;
     [SerializeField] private Transform _plantSpawnField;
 
     [SerializeField, Range(0, 100)] private int _animalSpawnCount;
     [SerializeField, Range(0, 100)] private int _plantSpawnCount;
 
-    [SerializeField] private AnimalConfig _animalConfig;
-    [SerializeField] private PlantConfig _plantConfig;
+    private AnimalConfig _animalConfig;
+    private PlantConfig _plantConfig;
+    private EcosystemParametersConfig _ecosystemParametersConfig;
 
     private LivingCreatureFactory _factory;
     private List<LivingCreature> _livingCreatures;
+    private List<Animal> _animals;
+    private List<Plant> _plants;
 
-    public void Init(LivingCreatureFactory factory) {
+    public void Init(LivingCreatureFactory factory, LivingCreatureConfigs configs, EcosystemParametersConfig ecosystemParametersConfig) {
         _factory = factory;
 
+        _animalConfig = configs.AnimalConfig;
+        _plantConfig = configs.PlantConfig;
+        _ecosystemParametersConfig = ecosystemParametersConfig;
+
         _livingCreatures = new List<LivingCreature>();
+        _animals = new List<Animal>();
+        _plants = new List<Plant>();
 
         StartCoroutine(SpawnAnimals(_animalSpawnCount));
         StartCoroutine(SpawnPlants(_plantSpawnCount));
@@ -32,9 +45,12 @@ public class LivingCreatureSpawner : MonoBehaviour {
         animal.Destroyed += OnDestroyed;
         animal.Reproducted += OnReproducted;
 
-        animal.Init(_animalConfig);
+        animal.Init(_animalConfig, _ecosystemParametersConfig);
 
         _livingCreatures.Add(animal);
+        _animals.Add(animal);
+
+        AnimalCountChanged?.Invoke(_animals.Count);
     }
 
     public void CreatePlant() {
@@ -43,22 +59,17 @@ public class LivingCreatureSpawner : MonoBehaviour {
         plant.Destroyed += OnDestroyed;
         plant.Reproducted += OnReproducted;
 
-        plant.Init(_plantConfig);
+        plant.Init(_plantConfig, _ecosystemParametersConfig);
 
         _livingCreatures.Add(plant);
+        _plants.Add(plant);
+
+        PlantCountChanged?.Invoke(_plants.Count);
     }
 
-    [ContextMenu("ShowViews")]
-    public void ShowViews() {
+    public void ShowViews(bool status) {
         foreach (var iLivingCreature in _livingCreatures) {
-            iLivingCreature.ShowView(true);
-        }
-    }
-
-    [ContextMenu("HideViews")]
-    public void HideViews() {
-        foreach (var iLivingCreature in _livingCreatures) {
-            iLivingCreature.ShowView(false);
+            iLivingCreature.ShowView(status);
         }
     }
 
@@ -68,6 +79,8 @@ public class LivingCreatureSpawner : MonoBehaviour {
         }
 
         _livingCreatures.Clear();
+        _animals.Clear();
+        _plants.Clear();
     }
 
     public IEnumerator SpawnAnimals(int spawnCount) {
@@ -86,15 +99,26 @@ public class LivingCreatureSpawner : MonoBehaviour {
     }
 
     private Vector2 GetRanfomPointInSpawnField(Transform field) {
-        float x = Random.Range(-0.5f, 0.5f);
-        float y = Random.Range(-0.5f, 0.5f);
+        float x = UnityEngine.Random.Range(-0.5f, 0.5f);
+        float y = UnityEngine.Random.Range(-0.5f, 0.5f);
         float z = 0;
 
         return field.TransformPoint(x, y, z);
     }
 
     private void OnDestroyed(LivingCreature creature) {
-        Debug.Log(creature);
+        if (creature is Animal) {
+            Animal animal = (Animal)creature;
+            _animals.Remove(animal);
+            AnimalCountChanged?.Invoke(_animals.Count);
+        }
+
+        if (creature is Plant) {
+            Plant plant = (Plant)creature;
+            _plants.Remove(plant);
+            PlantCountChanged?.Invoke(_plants.Count);
+        }
+
         creature.Destroyed -= OnDestroyed;
         _livingCreatures.Remove(creature);
         Destroy(creature.gameObject);

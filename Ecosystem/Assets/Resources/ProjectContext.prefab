@@ -75,4 +75,5 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   _ecosystemParametersConfig: {fileID: 11400000, guid: cda34d5806340374d9536f46df8cc884, type: 2}
+  _livingCreatureConfigs: {fileID: 11400000, guid: 2e209af5046851449b1d737240822a64, type: 2}
   _uiCompanentPrefabs: {fileID: 11400000, guid: 8c4e567539866514abaa411354a5ad04, type: 2}

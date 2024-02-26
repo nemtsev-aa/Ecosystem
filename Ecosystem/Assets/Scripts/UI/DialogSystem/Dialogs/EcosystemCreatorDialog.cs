@@ -36,6 +36,9 @@ public class EcosystemCreatorDialog : Dialog {
     }
 
     private void OnStartGameButtonClick() {
+        _config.TemperatureConfig.Variant = _temperaturePanel.CurrentValue;
+        _config.HumidityConfig.Variant = _humidityPanel.CurrentValue;
+
         ParameterVariantSelected?.Invoke(_temperaturePanel.CurrentValue, _humidityPanel.CurrentValue);
     }
 

@@ -429,7 +429,7 @@ Camera:
   m_Enabled: 1
   serializedVersion: 2
   m_ClearFlags: 2
-  m_BackGroundColor: {r: 0.020870427, g: 0.6320754, b: 0.3599973, a: 1}
+  m_BackGroundColor: {r: 0.020870427, g: 0.6320754, b: 0.50980395, a: 1}
   m_projectionMatrixMode: 1
   m_GateFitMode: 2
   m_FOVAxisMode: 0
@@ -1438,8 +1438,6 @@ MonoBehaviour:
   _plantSpawnField: {fileID: 290481628}
   _animalSpawnCount: 0
   _plantSpawnCount: 0
-  _animalConfig: {fileID: 11400000, guid: 2f8684c5e5d7f3e439d497649a26199d, type: 2}
-  _plantConfig: {fileID: 11400000, guid: b91909e6c4f0db043a13fc9898b1b7e3, type: 2}
 --- !u!4 &1714765083
 Transform:
   m_ObjectHideFlags: 0

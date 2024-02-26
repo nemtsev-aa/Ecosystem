@@ -13,7 +13,7 @@ GameObject:
   - component: {fileID: 1648531870613111674}
   - component: {fileID: 1648531870613111677}
   m_Layer: 0
-  m_Name: Settings (Button)
+  m_Name: Views (Button)
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -2264,7 +2264,7 @@ GameObject:
   - component: {fileID: 7586226002914532337}
   - component: {fileID: 4485223633409405742}
   m_Layer: 0
-  m_Name: Return (Button)
+  m_Name: Close (Button)
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -2586,7 +2586,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   BackButton: {fileID: 4485223633409405742}
-  SettingsButton: {fileID: 1648531870613111677}
+  SettingsButton: {fileID: 0}
   Panels:
   - {fileID: 1648531872096635698}
   - {fileID: 1648531870835530700}
@@ -2594,6 +2594,7 @@ MonoBehaviour:
   _createPlantButton: {fileID: 1648531871326417449}
   _createPlanktonButton: {fileID: 1648531870773330704}
   _restartGameButton: {fileID: 1648531872660037429}
+  _viewsButton: {fileID: 1648531870613111677}
 --- !u!1 &6167402695871157209
 GameObject:
   m_ObjectHideFlags: 0

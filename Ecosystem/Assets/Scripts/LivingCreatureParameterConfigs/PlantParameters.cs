@@ -12,25 +12,35 @@ public class PlantParameters : LivingCreatureParameters, IDisposable {
     [SerializeField, Range(0, 1f)] private float _reproductionSpeed;
 
     private Plant _plant;
+    private float _temperatureFactor;
+    private float _humidityFactor;
+
     private Health _health;
     private Age _age;
     private Grow _grow;
     private ReproductionDesire _reproductionDesire;
     private float _maxHealth;
 
-    private float _deltaGrowing => _growingSpeed * Time.deltaTime;
-    private float _deltaReproduction => _reproductionSpeed * Time.deltaTime;
+    private float _deltaGrowing => _growingSpeed * _temperatureFactor * _humidityFactor * Time.deltaTime;
+    private float _deltaReproduction => _reproductionSpeed * _temperatureFactor * _humidityFactor * Time.deltaTime;
 
     public Age Age => _age;
     public Health Health => _health;
     public Grow Grow => _grow;
     public ReproductionDesire ReproductionDesire => _reproductionDesire;
 
-    public void Init(Plant plant) {
+    public void Init(Plant plant, EcosystemParametersConfig ecosystemConfig) {
         _plant = plant;
 
+        _temperatureFactor = ecosystemConfig.TemperatureConfig.GetValue();
+        _humidityFactor = ecosystemConfig.HumidityConfig.GetValue();
+
         _health = new Health(GetClone<HealthConfig>());
+        _health.MaxValue += _temperatureFactor * _humidityFactor;
+
         _age = new Age(GetClone<AgeConfig>());
+        _age.MaxValue += _temperatureFactor * _humidityFactor;
+
         _grow = new Grow(GetClone<GrowConfig>());
         _reproductionDesire = new ReproductionDesire(GetClone<ReproductionDesireConfig>());
         _maxHealth = _health.MaxValue;

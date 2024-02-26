@@ -3,6 +3,7 @@ using Zenject;
 
 public class GlobalInstaller : MonoInstaller {
     [SerializeField] private EcosystemParametersConfig _ecosystemParametersConfig;
+    [SerializeField] private LivingCreatureConfigs _livingCreatureConfigs;
     [SerializeField] private UICompanentPrefabs _uiCompanentPrefabs;
 
     public override void InstallBindings() {
@@ -20,10 +21,10 @@ public class GlobalInstaller : MonoInstaller {
         Container.BindInstance(timeCounter).AsSingle();
         Container.BindInterfacesAndSelfTo<ITickable>().FromInstance(timeCounter).AsSingle();
 
-        EcosystemManager ecosystemManager = new EcosystemManager(_ecosystemParametersConfig, timeCounter);
+        EcosystemManager ecosystemManager = new EcosystemManager(timeCounter);
         Container.BindInstance(ecosystemManager).AsSingle();
 
-        DialogMediator dialogMediator = new DialogMediator(_ecosystemParametersConfig, ecosystemManager);
+        DialogMediator dialogMediator = new DialogMediator(ecosystemManager);
         Container.BindInstance(dialogMediator).AsSingle();
     }
 
@@ -32,6 +33,11 @@ public class GlobalInstaller : MonoInstaller {
             Debug.LogError($"EcosystemParametersConfig is empty");
 
         Container.Bind<EcosystemParametersConfig>().FromInstance(_ecosystemParametersConfig).AsSingle();
+
+        if (_livingCreatureConfigs == null)
+            Debug.LogError($"LivingCreatureConfigs is empty");
+
+        Container.Bind<LivingCreatureConfigs>().FromInstance(_livingCreatureConfigs).AsSingle();
     }
 
     private void BindUICompanentsConfig() {

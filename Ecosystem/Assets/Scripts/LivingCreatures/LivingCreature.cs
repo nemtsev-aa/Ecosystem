@@ -7,7 +7,9 @@ public abstract class LivingCreature : MonoBehaviour {
     public Action<LivingCreature> Reproducted;
 
     protected LivingCreatureStateMachine StateMachine { get; set; }
-    public abstract void Init(LivingCreatureConfig config);
+    protected EcosystemParametersConfig EcosystemConfig { get; set; }
+    
+    public abstract void Init(LivingCreatureConfig config, EcosystemParametersConfig ecosystemParametersConfig);
     public abstract void ShowView(bool status);
 
     private void Update() {

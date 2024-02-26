@@ -5,13 +5,9 @@ public class EcosystemManager {
     public event Action SimulationStarted;
     public event Action<float> SimulationStopped;
 
-    private TemperatureConfig _temperature;
-    private HumidityConfig _humidity;
     private TimeCounter _timeCounter;
 
-    public EcosystemManager(EcosystemParametersConfig ecosystemParametersConfig, TimeCounter timeCounter) {
-        _temperature = ecosystemParametersConfig.TemperatureConfig;
-        _humidity = ecosystemParametersConfig.HumidityConfig;
+    public EcosystemManager(TimeCounter timeCounter) {
         _timeCounter = timeCounter;
     }
 
@@ -28,6 +24,7 @@ public class EcosystemManager {
     public void StopSimulation() {
         IsStarted = false;
         _timeCounter.SetWatchStatus(false);
+        _timeCounter.Reset();
 
         SimulationStopped?.Invoke(ExistenceTime); 
     }
