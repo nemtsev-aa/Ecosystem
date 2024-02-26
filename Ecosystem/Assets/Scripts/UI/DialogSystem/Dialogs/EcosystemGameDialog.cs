@@ -14,11 +14,15 @@ public class EcosystemGameDialog : Dialog {
 
     private ResultPanel _resultPanel;
     private EcosystemLifeTimePanel _ecosystemLifeTimePanel;
+    private EcosystemParametersPanel _ecosystemParametersPanel;
+
+    private EcosystemParametersConfig _config;
     private TimeCounter _timeCounter;
 
     [Inject]
-    public void Construct(TimeCounter timeCounter) {
+    public void Construct(TimeCounter timeCounter, EcosystemParametersConfig config) {
         _timeCounter = timeCounter;
+        _config = config;
     }
 
     public override void AddListeners() {
@@ -39,6 +43,9 @@ public class EcosystemGameDialog : Dialog {
     }
 
     public override void InitializationPanels() {
+        _ecosystemParametersPanel = GetPanelByType<EcosystemParametersPanel>();
+        _ecosystemParametersPanel.Init(_config);
+
         _ecosystemLifeTimePanel = GetPanelByType<EcosystemLifeTimePanel>();
         _ecosystemLifeTimePanel.Init(_timeCounter);
         _ecosystemLifeTimePanel.Show(true);

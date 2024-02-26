@@ -9,9 +9,9 @@ public class EcosystemManager {
     private HumidityConfig _humidity;
     private TimeCounter _timeCounter;
 
-    public EcosystemManager(TemperatureConfig temperature, HumidityConfig humidity, TimeCounter timeCounter) {
-        _temperature = temperature;
-        _humidity = humidity;
+    public EcosystemManager(EcosystemParametersConfig ecosystemParametersConfig, TimeCounter timeCounter) {
+        _temperature = ecosystemParametersConfig.TemperatureConfig;
+        _humidity = ecosystemParametersConfig.HumidityConfig;
         _timeCounter = timeCounter;
     }
 

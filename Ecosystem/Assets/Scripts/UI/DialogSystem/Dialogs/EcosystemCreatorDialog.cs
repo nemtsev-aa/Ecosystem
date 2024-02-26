@@ -1,17 +1,30 @@
 using System;
 using UnityEngine;
 using UnityEngine.UI;
+using Zenject;
 
 public class EcosystemCreatorDialog : Dialog {
     public event Action<EcosystemParameterVariants, EcosystemParameterVariants> ParameterVariantSelected;
 
     [SerializeField] private Button _startGameButton;
-    [SerializeField] private Image _temperatureFiller;
-    [SerializeField] private Image _humidityFiller;
+    private TemperaturePanel _temperaturePanel;
+    private HumidityPanel _humidityPanel;
 
-    private EcosystemParameterVariants _temperature = EcosystemParameterVariants.Normal;
-    private EcosystemParameterVariants _humidity = EcosystemParameterVariants.Normal;
-    
+    private EcosystemParametersConfig _config;
+
+    [Inject]
+    public void Construct(EcosystemParametersConfig config) {
+        _config = config;
+    }
+
+    public override void InitializationPanels() {
+        _temperaturePanel = GetPanelByType<TemperaturePanel>();
+        _temperaturePanel.Init(_config.TemperatureConfig);
+
+        _humidityPanel = GetPanelByType<HumidityPanel>();
+        _humidityPanel.Init(_config.HumidityConfig);
+    }
+
     public override void AddListeners() {
         base.AddListeners();
         _startGameButton.onClick.AddListener(OnStartGameButtonClick);
@@ -23,53 +36,8 @@ public class EcosystemCreatorDialog : Dialog {
     }
 
     private void OnStartGameButtonClick() {
-        GetTemperatureVariant();
-        GetHumidityVariant();
-
-        ParameterVariantSelected?.Invoke(_temperature, _humidity);
+        ParameterVariantSelected?.Invoke(_temperaturePanel.CurrentValue, _humidityPanel.CurrentValue);
     }
-
-    private void GetHumidityVariant() {
-        switch (_humidityFiller.fillAmount) {
-            case 0f:
-                _humidity = EcosystemParameterVariants.ExtraLow;
-                break;
-            case 0.25f:
-                _humidity = EcosystemParameterVariants.Low;
-                break;
-            case 0.5f:
-                _humidity = EcosystemParameterVariants.Normal;
-                break;
-            case 0.75f:
-                _humidity = EcosystemParameterVariants.High;
-                break;
-            case 1f:
-                _humidity = EcosystemParameterVariants.ExtraHigh;
-                break;
-        }
-    }
-
-    private void GetTemperatureVariant() {
-        switch (_temperatureFiller.fillAmount) {
-            case 0f:
-                _temperature = EcosystemParameterVariants.ExtraLow;
-                break;
-            case 0.25f:
-                _temperature = EcosystemParameterVariants.Low;
-                break;
-            case 0.5f:
-                _temperature = EcosystemParameterVariants.Normal;
-                break;
-            case 0.75f:
-                _temperature = EcosystemParameterVariants.High;
-                break;
-            case 1f:
-                _temperature = EcosystemParameterVariants.ExtraHigh;
-                break;
-        }
-    }
-
-    public override void InitializationPanels() { }
 
     public override void PreparingForClosure() { }
 }

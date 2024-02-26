@@ -18,13 +18,13 @@ public class DialogMediator : IDisposable {
     private DialogSwitcher _dialogSwitcher;
     private List<Dialog> _dialogs;
 
-    private TemperatureConfig _temperatureConfig;
-    private HumidityConfig _humidityConfig;
+    private TemperatureConfig _temperature;
+    private HumidityConfig _humidity;
     private EcosystemManager _ecosystemManager;
 
-    public DialogMediator(TemperatureConfig temperatureConfig, HumidityConfig humidityConfig, EcosystemManager ecosystemManager) {
-        _temperatureConfig = temperatureConfig;
-        _humidityConfig = humidityConfig;
+    public DialogMediator(EcosystemParametersConfig ecosystemParametersConfig, EcosystemManager ecosystemManager) {
+        _temperature = ecosystemParametersConfig.TemperatureConfig;
+        _humidity = ecosystemParametersConfig.HumidityConfig;
         _ecosystemManager = ecosystemManager;
     }
 
@@ -115,11 +115,10 @@ public class DialogMediator : IDisposable {
     }
 
     private void OnParameterVariantSelected(EcosystemParameterVariants temperature, EcosystemParameterVariants humidity) {
-        _temperatureConfig.Variant = temperature;
-        _humidityConfig.Variant = humidity;
+        _temperature.Variant = temperature;
+        _humidity.Variant = humidity;
 
         _dialogSwitcher.ShowDialog(DialogTypes.EcosystemGame);
-        _ecosystemManager.StartSimulation();
     }
     #endregion
 
@@ -131,10 +130,16 @@ public class DialogMediator : IDisposable {
     }
 
     private void OnCreatePlantClicked() {
+        if (_ecosystemManager.IsStarted == false)
+            _ecosystemManager.StartSimulation();
+
         CreatePlantClicked?.Invoke();
     }
 
     private void OnCreatePlanktonClicked() {
+        if (_ecosystemManager.IsStarted == false)
+            _ecosystemManager.StartSimulation();
+
         CreatePlanktonClicked?.Invoke();
     }
 
@@ -143,7 +148,9 @@ public class DialogMediator : IDisposable {
     }
 
     private void UnSubscribeToEcosystemGameDialogActions() {
-        
+        _ecosystemGameDialog.CreatePlantClicked -= OnCreatePlantClicked;
+        _ecosystemGameDialog.CreatePlanktonClicked -= OnCreatePlanktonClicked;
+        _ecosystemGameDialog.RestartGameClicked -= OnRestartGameClicked;
     }
     #endregion
 

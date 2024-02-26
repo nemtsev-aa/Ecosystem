@@ -2,8 +2,7 @@ using UnityEngine;
 using Zenject;
 
 public class GlobalInstaller : MonoInstaller {
-    [SerializeField] private TemperatureConfig _temperature;
-    [SerializeField] private HumidityConfig _humidity;
+    [SerializeField] private EcosystemParametersConfig _ecosystemParametersConfig;
     [SerializeField] private UICompanentPrefabs _uiCompanentPrefabs;
 
     public override void InstallBindings() {
@@ -21,23 +20,18 @@ public class GlobalInstaller : MonoInstaller {
         Container.BindInstance(timeCounter).AsSingle();
         Container.BindInterfacesAndSelfTo<ITickable>().FromInstance(timeCounter).AsSingle();
 
-        EcosystemManager ecosystemManager = new EcosystemManager(_temperature, _humidity, timeCounter);
+        EcosystemManager ecosystemManager = new EcosystemManager(_ecosystemParametersConfig, timeCounter);
         Container.BindInstance(ecosystemManager).AsSingle();
 
-        DialogMediator dialogMediator = new DialogMediator(_temperature, _humidity, ecosystemManager);
+        DialogMediator dialogMediator = new DialogMediator(_ecosystemParametersConfig, ecosystemManager);
         Container.BindInstance(dialogMediator).AsSingle();
     }
 
     private void BindConfigs() {
-        if (_temperature == null)
-            Debug.LogError($"TemperatureConfig is empty");
+        if (_ecosystemParametersConfig == null)
+            Debug.LogError($"EcosystemParametersConfig is empty");
 
-        Container.Bind<TemperatureConfig>().FromInstance(_temperature).AsSingle();
-
-        if (_humidity == null)
-            Debug.LogError($"HumidityConfig is empty");
-
-        Container.Bind<HumidityConfig>().FromInstance(_humidity).AsSingle();
+        Container.Bind<EcosystemParametersConfig>().FromInstance(_ecosystemParametersConfig).AsSingle();
     }
 
     private void BindUICompanentsConfig() {

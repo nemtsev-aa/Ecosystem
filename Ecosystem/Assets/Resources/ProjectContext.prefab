@@ -74,6 +74,5 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 207b6fd8d5f180d4189ae900be3eac36, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  _temperature: {fileID: 11400000, guid: 772b29bbb5251eb4392e8430f1b0dae0, type: 2}
-  _humidity: {fileID: 11400000, guid: e64bcc1c584e4ad49bae0aedde8ab3de, type: 2}
+  _ecosystemParametersConfig: {fileID: 11400000, guid: cda34d5806340374d9536f46df8cc884, type: 2}
   _uiCompanentPrefabs: {fileID: 11400000, guid: 8c4e567539866514abaa411354a5ad04, type: 2}
